@@ -379,6 +379,13 @@ public class ControllerImplementation implements IController, ActionListener {
 
         if (answer == 0) {
             deleteAll();
+            JOptionPane.showMessageDialog(
+                    menu,
+                    "All persons have been deleted successfully!",
+                    "Message",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+
         }
     }
 
