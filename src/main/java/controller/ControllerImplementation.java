@@ -20,8 +20,10 @@ import view.Update;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -31,12 +33,14 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import javax.persistence.*;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import org.jdatepicker.DateModel;
+import view.Login;
 
 /**
  * This class starts the visual part of the application and programs and manages
@@ -52,6 +56,7 @@ public class ControllerImplementation implements IController, ActionListener {
     //accessed from the Controller.
     private final DataStorageSelection dSS;
     private IDAO dao;
+    private Login login;
     private Menu menu;
     private Insert insert;
     private Read read;
@@ -77,7 +82,9 @@ public class ControllerImplementation implements IController, ActionListener {
      */
     @Override
     public void start() {
-        dSS.setVisible(true);
+        this.login = new Login();
+        login.getLoginButton().addActionListener(this);
+        login.setVisible(true);
     }
 
     /**
@@ -88,30 +95,73 @@ public class ControllerImplementation implements IController, ActionListener {
      */
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == dSS.getAccept()[0]) {
+
+        if (login != null && e.getSource() == login.getLoginButton()) {
+            handleLogin();
+
+        } else if (e.getSource() == dSS.getAccept()[0]) {
             handleDataStorageSelection();
+
         } else if (e.getSource() == menu.getInsert()) {
             handleInsertAction();
+
         } else if (insert != null && e.getSource() == insert.getInsert()) {
             handleInsertPerson();
+
         } else if (e.getSource() == menu.getRead()) {
             handleReadAction();
+
         } else if (read != null && e.getSource() == read.getRead()) {
             handleReadPerson();
+
         } else if (e.getSource() == menu.getDelete()) {
             handleDeleteAction();
+
         } else if (delete != null && e.getSource() == delete.getDelete()) {
             handleDeletePerson();
+
         } else if (e.getSource() == menu.getUpdate()) {
             handleUpdateAction();
+
         } else if (update != null && e.getSource() == update.getRead()) {
             handleReadForUpdate();
+
         } else if (update != null && e.getSource() == update.getUpdate()) {
             handleUpdatePerson();
+
         } else if (e.getSource() == menu.getReadAll()) {
             handleReadAll();
+
         } else if (e.getSource() == menu.getDeleteAll()) {
             handleDeleteAll();
+        }
+    }
+
+    private void handleLogin() {
+
+        String usuario = login.getUsernameField().getText();
+        String contrasena = login.getPasswordField().getText();
+
+        if (login(usuario, contrasena)) {
+
+            JOptionPane.showMessageDialog(
+                    login,
+                    "Login correcto",
+                    "Login",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+
+            login.dispose();
+            dSS.setVisible(true);
+
+        } else {
+
+            JOptionPane.showMessageDialog(
+                    login,
+                    "Usuario o contraseña incorrectos",
+                    "Login",
+                    JOptionPane.ERROR_MESSAGE
+            );
         }
     }
 
@@ -358,21 +408,70 @@ public class ControllerImplementation implements IController, ActionListener {
         Object[] options = {"Yes", "No"};
         //int answer = JOptionPane.showConfirmDialog(menu, "Are you sure to delete all people registered?", "Delete All - People v1.1.0", 0, 0);
         int answer = JOptionPane.showOptionDialog(
-        menu,
-        "Are you sure you want to delete all registered people?", 
-        "Delete All - People v1.1.0",
-        JOptionPane.YES_NO_OPTION,
-        JOptionPane.WARNING_MESSAGE,
-        null,
-        options,
-        options[1] // Default selection is "No"
-    );
+                menu,
+                "Are you sure you want to delete all registered people?",
+                "Delete All - People v1.1.0",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.WARNING_MESSAGE,
+                null,
+                options,
+                options[1] // Default selection is "No"
+        );
 
         if (answer == 0) {
             deleteAll();
         }
     }
-    
+
+    public boolean login(String usuario, String contrasena) {
+        HashMap<String, String> usuarios = this.cargarUsuarios();
+        if (usuarios.containsKey(usuario)) {
+            String contrasenaGuardada = usuarios.get(usuario);
+            if (contrasenaGuardada.equals(contrasena)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public HashMap<String, String> cargarUsuarios() {
+        String rutaProyecto = System.getProperty("user.dir");
+        String separador = File.separator;
+        String rutaCarpeta = rutaProyecto + separador + "data";
+        File carpeta = new File(rutaCarpeta);
+        if (!carpeta.exists()) {
+            carpeta.mkdir();
+        }
+        String rutaArchivo = rutaCarpeta + separador + "UsersList.txt";
+        System.out.println(rutaArchivo);
+
+        String linea = "";
+        HashMap<String, String> usuarios = new HashMap<>();
+
+        try {
+            File archivo = new File(rutaArchivo);
+            FileReader fr = new FileReader(archivo);
+            BufferedReader br = new BufferedReader(fr);
+
+            while ((linea = br.readLine()) != null) {
+
+                String[] datos = linea.split(";");
+
+                String usuario = datos[0];
+                String contrasena = datos[1];
+
+                usuarios.put(usuario, contrasena);
+            }
+
+            br.close();
+
+        } catch (IOException e) {
+            System.out.println("ERROR FICHERO");
+        }
+
+        return usuarios;
+    }
+
     /**
      * This function inserts the Person object with the requested NIF, if it
      * doesn't exist. If there is any access problem with the storage device,
