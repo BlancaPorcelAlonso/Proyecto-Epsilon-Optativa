@@ -23,6 +23,7 @@ public class Person implements Serializable {
     private String nif;
     private String name;
     private Date dateOfBirth;
+    private String postalCode;
     @Transient
     private ImageIcon photo;
     private String email;
@@ -78,6 +79,13 @@ public class Person implements Serializable {
         this.nif = nif;
         this.dateOfBirth = dateOfBirth;
         this.photo = photo;
+    }
+
+    public Person(String name, String nif, String email, String phoneNumber, String postalCode) {
+        this(name, nif);
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.postalCode = postalCode;
     }
 
     public Person(String name, String nif, Date dateOfBirth, ImageIcon photo, String email) {
@@ -154,6 +162,14 @@ public class Person implements Serializable {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public String getPostalCode() {
+        return postalCode;
+    }
+
+    public void setPostalCode(String postalCode) {
+        this.postalCode = postalCode;
     }
 
     /**

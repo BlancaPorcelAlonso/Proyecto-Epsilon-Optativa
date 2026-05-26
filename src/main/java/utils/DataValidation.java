@@ -48,4 +48,15 @@ public class DataValidation {
         return phoneNumber.trim().matches(phoneRegex);
     }
 
+    public static boolean isValidPostalCode(String postalCode) {
+
+    if (postalCode == null || postalCode.trim().isEmpty()) {
+        return false;
+    }
+
+    String postalCodeRegex = "^(\\d{5})(?:[-\\s]?\\d{4})?$";
+
+    return postalCode.trim().matches(postalCodeRegex);
+}
+    
 }
