@@ -120,13 +120,13 @@ public class ControllerImplementation implements IController, ActionListener {
         String daoSelected = ((javax.swing.JCheckBox) (dSS.getAccept()[1])).getText();
         dSS.dispose();
         switch (daoSelected) {
-            case Constants.arrayList :
+            case Constants.arrayList:
                 dao = new DAOArrayList();
                 break;
             case Constants.hashMap:
                 dao = new DAOHashMap();
                 break;
-            case Constants.file :
+            case Constants.file:
                 setupFileStorage();
                 break;
             case Constants.fileSerial:
@@ -227,15 +227,35 @@ public class ControllerImplementation implements IController, ActionListener {
     }
 
     private void handleInsertPerson() {
-        Person p = new Person(insert.getNam().getText(), insert.getNif().getText());
+        String emailText = insert.getEmail().getText().trim();
+
+        if (!utils.DataValidation.isValidEmail(emailText)) {
+            JOptionPane.showMessageDialog(
+                    insert,
+                    "Invalid email format.",
+                    insert.getTitle(),
+                    JOptionPane.ERROR_MESSAGE
+            );
+            return;
+        }
+
+        Person p = new Person(
+                insert.getNam().getText().trim(),
+                insert.getNif().getText().trim(),
+                emailText
+        );
+
         if (insert.getDateOfBirth().getModel().getValue() != null) {
             p.setDateOfBirth(((GregorianCalendar) insert.getDateOfBirth().getModel().getValue()).getTime());
         }
+
         if (insert.getPhoto().getIcon() != null) {
             p.setPhoto((ImageIcon) insert.getPhoto().getIcon());
         }
+
         insert(p);
         insert.getReset().doClick();
+
     }
 
     private void handleReadAction() {
@@ -247,15 +267,18 @@ public class ControllerImplementation implements IController, ActionListener {
     private void handleReadPerson() {
         Person p = new Person(read.getNif().getText());
         Person pNew = read(p);
+
         if (pNew != null) {
             read.getNam().setText(pNew.getName());
+            read.getEmail().setText(pNew.getEmail());
+
             if (pNew.getDateOfBirth() != null) {
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(pNew.getDateOfBirth());
                 DateModel<Calendar> dateModel = (DateModel<Calendar>) read.getDateOfBirth().getModel();
                 dateModel.setValue(calendar);
             }
-            //To avoid charging former images
+
             if (pNew.getPhoto() != null) {
                 pNew.getPhoto().getImage().flush();
                 read.getPhoto().setIcon(pNew.getPhoto());
@@ -345,10 +368,11 @@ public class ControllerImplementation implements IController, ActionListener {
                 } else {
                     model.setValueAt("", i, 2);
                 }
+                model.setValueAt(s.get(i).getEmail(), i, 3);
                 if (s.get(i).getPhoto() != null) {
-                    model.setValueAt("yes", i, 3);
+                    model.setValueAt("yes", i, 4);
                 } else {
-                    model.setValueAt("no", i, 3);
+                    model.setValueAt("no", i, 4);
                 }
             }
             readAll.setVisible(true);
@@ -359,21 +383,21 @@ public class ControllerImplementation implements IController, ActionListener {
         Object[] options = {"Yes", "No"};
         //int answer = JOptionPane.showConfirmDialog(menu, "Are you sure to delete all people registered?", "Delete All - People v1.1.0", 0, 0);
         int answer = JOptionPane.showOptionDialog(
-        menu,
-        "Are you sure you want to delete all registered people?", 
-        "Delete All - People v1.1.0",
-        JOptionPane.YES_NO_OPTION,
-        JOptionPane.WARNING_MESSAGE,
-        null,
-        options,
-        options[1] // Default selection is "No"
-    );
+                menu,
+                "Are you sure you want to delete all registered people?",
+                "Delete All - People v1.1.0",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.WARNING_MESSAGE,
+                null,
+                options,
+                options[1] // Default selection is "No"
+        );
 
         if (answer == 0) {
             deleteAll();
         }
     }
-    
+
     /**
      * This function inserts the Person object with the requested NIF, if it
      * doesn't exist. If there is any access problem with the storage device,
