@@ -228,21 +228,23 @@ public class ControllerImplementation implements IController, ActionListener {
 
     private void handleInsertPerson() {
         String emailText = insert.getEmail().getText().trim();
+        String phoneNumberText = insert.getPhoneNumber().getText().trim();
 
         if (!utils.DataValidation.isValidEmail(emailText)) {
-            JOptionPane.showMessageDialog(
-                    insert,
-                    "Invalid email format.",
-                    insert.getTitle(),
-                    JOptionPane.ERROR_MESSAGE
-            );
+            JOptionPane.showMessageDialog(insert, "Invalid email format.", insert.getTitle(), JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        if (!utils.DataValidation.isValidPhoneNumber(phoneNumberText)) {
+            JOptionPane.showMessageDialog(insert, "Invalid phone number format.", insert.getTitle(), JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         Person p = new Person(
                 insert.getNam().getText().trim(),
                 insert.getNif().getText().trim(),
-                emailText
+                emailText,
+                phoneNumberText
         );
 
         if (insert.getDateOfBirth().getModel().getValue() != null) {
@@ -255,7 +257,6 @@ public class ControllerImplementation implements IController, ActionListener {
 
         insert(p);
         insert.getReset().doClick();
-
     }
 
     private void handleReadAction() {
@@ -271,6 +272,7 @@ public class ControllerImplementation implements IController, ActionListener {
         if (pNew != null) {
             read.getNam().setText(pNew.getName());
             read.getEmail().setText(pNew.getEmail());
+            read.getPhoneNumber().setText(pNew.getPhoneNumber());
 
             if (pNew.getDateOfBirth() != null) {
                 Calendar calendar = Calendar.getInstance();
@@ -315,6 +317,10 @@ public class ControllerImplementation implements IController, ActionListener {
             Person p = new Person(update.getNif().getText());
             Person pNew = read(p);
             if (pNew != null) {
+                update.getEmail().setEnabled(true);
+                update.getPhoneNumber().setEnabled(true);
+                update.getEmail().setText(pNew.getEmail());
+                update.getPhoneNumber().setText(pNew.getPhoneNumber());
                 update.getNam().setEnabled(true);
                 update.getDateOfBirth().setEnabled(true);
                 update.getPhoto().setEnabled(true);
@@ -338,20 +344,40 @@ public class ControllerImplementation implements IController, ActionListener {
         }
     }
 
-    public void handleUpdatePerson() {
-        if (update != null) {
-            Person p = new Person(update.getNam().getText(), update.getNif().getText());
-            if ((update.getDateOfBirth().getModel().getValue()) != null) {
-                p.setDateOfBirth(((GregorianCalendar) update.getDateOfBirth().getModel().getValue()).getTime());
-            }
-            if ((ImageIcon) (update.getPhoto().getIcon()) != null) {
-                p.setPhoto((ImageIcon) update.getPhoto().getIcon());
-            }
-            update(p);
-            update.getReset().doClick();
-        }
-    }
+  public void handleUpdatePerson() {
+    if (update != null) {
+        String emailText = update.getEmail().getText().trim();
+        String phoneNumberText = update.getPhoneNumber().getText().trim();
 
+        if (!utils.DataValidation.isValidEmail(emailText)) {
+            JOptionPane.showMessageDialog(update, "Invalid email format.", update.getTitle(), JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        if (!utils.DataValidation.isValidPhoneNumber(phoneNumberText)) {
+            JOptionPane.showMessageDialog(update, "Invalid phone number format.", update.getTitle(), JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        Person p = new Person(
+                update.getNam().getText().trim(),
+                update.getNif().getText().trim(),
+                emailText,
+                phoneNumberText
+        );
+
+        if ((update.getDateOfBirth().getModel().getValue()) != null) {
+            p.setDateOfBirth(((GregorianCalendar) update.getDateOfBirth().getModel().getValue()).getTime());
+        }
+
+        if ((ImageIcon) (update.getPhoto().getIcon()) != null) {
+            p.setPhoto((ImageIcon) update.getPhoto().getIcon());
+        }
+
+        update(p);
+        update.getReset().doClick();
+    }
+}
     public void handleReadAll() {
         ArrayList<Person> s = readAll();
         if (s.isEmpty()) {
@@ -374,6 +400,7 @@ public class ControllerImplementation implements IController, ActionListener {
                 } else {
                     model.setValueAt("no", i, 4);
                 }
+                model.setValueAt(s.get(i).getPhoneNumber(), i, 5);
             }
             readAll.setVisible(true);
         }

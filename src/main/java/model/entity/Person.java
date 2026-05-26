@@ -26,6 +26,7 @@ public class Person implements Serializable {
     @Transient
     private ImageIcon photo;
     private String email;
+    private String phoneNumber;
     @Lob
     private byte[] photoOnlyJPA;
 
@@ -88,8 +89,14 @@ public class Person implements Serializable {
     }
 
     public Person(String name, String nif, String email) {
-    this(name, nif);
-    this.email = email;
+        this(name, nif);
+        this.email = email;
+    }
+
+    public Person(String name, String nif, String email, String phoneNumber) {
+        this(name, nif);
+        this.email = email;
+        this.phoneNumber = phoneNumber;
     }
 
     //Getters and Setters
@@ -139,6 +146,14 @@ public class Person implements Serializable {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     /**
