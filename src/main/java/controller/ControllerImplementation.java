@@ -17,6 +17,7 @@ import view.Menu;
 import view.Read;
 import view.ReadAll;
 import view.Update;
+import view.Count;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -112,6 +113,8 @@ public class ControllerImplementation implements IController, ActionListener {
             handleReadAll();
         } else if (e.getSource() == menu.getDeleteAll()) {
             handleDeleteAll();
+        } else if (e.getSource() == menu.getCount()) {
+            handleCountPeople();
         }
     }
 
@@ -217,6 +220,7 @@ public class ControllerImplementation implements IController, ActionListener {
         menu.getDelete().addActionListener(this);
         menu.getReadAll().addActionListener(this);
         menu.getDeleteAll().addActionListener(this);
+        menu.getCount().addActionListener(this);
     }
 
     private void handleInsertAction() {
@@ -272,36 +276,36 @@ public class ControllerImplementation implements IController, ActionListener {
     }
 
     public void handleDeletePerson() {
-         if (delete != null) {
+        if (delete != null) {
 
-        Object[] options = {"Yes", "No"};
+            Object[] options = {"Yes", "No"};
 
-        int answer = JOptionPane.showOptionDialog(delete,"Are you sure you want to delete this person?",
-                delete.getTitle(),
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.QUESTION_MESSAGE,
-                null,
-                options,
-                options[1]
-        );
-
-        if (answer == 0) {
-
-            Person p = new Person(delete.getNif().getText());
-
-            delete(p);
-
-            JOptionPane.showMessageDialog(
-                    delete,
-                    "Person deleted successfully!",
+            int answer = JOptionPane.showOptionDialog(delete, "Are you sure you want to delete this person?",
                     delete.getTitle(),
-                    JOptionPane.INFORMATION_MESSAGE
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    options,
+                    options[1]
             );
 
-            delete.getReset().doClick();
+            if (answer == 0) {
+
+                Person p = new Person(delete.getNif().getText());
+
+                delete(p);
+
+                JOptionPane.showMessageDialog(
+                        delete,
+                        "Person deleted successfully!",
+                        delete.getTitle(),
+                        JOptionPane.INFORMATION_MESSAGE
+                );
+
+                delete.getReset().doClick();
+            }
         }
-    }
-         
+
     }
 
     public void handleUpdateAction() {
@@ -413,7 +417,18 @@ public class ControllerImplementation implements IController, ActionListener {
 
         }
     }
+    
+    public void handleCountPeople() {
 
+    int totalPeople = readAll().size();
+
+    Count countView = new Count();
+
+    countView.getCountField().setText(String.valueOf(totalPeople));
+
+    countView.setVisible(true);
+
+    }
     /**
      * This function inserts the Person object with the requested NIF, if it
      * doesn't exist. If there is any access problem with the storage device,
@@ -567,5 +582,7 @@ public class ControllerImplementation implements IController, ActionListener {
             }
         }
     }
+    
+    
 
 }
