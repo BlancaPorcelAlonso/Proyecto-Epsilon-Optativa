@@ -112,6 +112,18 @@ public class Update extends javax.swing.JDialog {
         update.setMaximumSize(new java.awt.Dimension(194, 33));
         update.setMinimumSize(new java.awt.Dimension(194, 33));
         update.setPreferredSize(new java.awt.Dimension(194, 33));
+        update.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                updateActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(12, 12, 12, 12);
+        getContentPane().add(update, gridBagConstraints);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel1.setText("NIF ");
@@ -422,40 +434,9 @@ public class Update extends javax.swing.JDialog {
         photo.setIcon(null);
     }//GEN-LAST:event_photoMouseClicked
 
-    private void nifActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nifActionPerformed
+    private void updateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_nifActionPerformed
-
-    private void phoneNumberKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_phoneNumberKeyPressed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_phoneNumberKeyPressed
-
-    private void phoneNumberKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_phoneNumberKeyReleased
-        update.setEnabled(!name.getText().trim().isEmpty()
-                && utils.DataValidation.isValidEmail(email.getText().trim())
-                && utils.DataValidation.isValidPhoneNumber(phoneNumber.getText().trim()));
-    }//GEN-LAST:event_phoneNumberKeyReleased
-
-    private void emailKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_emailKeyPressed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_emailKeyPressed
-
-    private void emailKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_emailKeyReleased
-        update.setEnabled(!name.getText().trim().isEmpty()
-                && utils.DataValidation.isValidEmail(email.getText().trim())
-                && utils.DataValidation.isValidPhoneNumber(phoneNumber.getText().trim()));
-    }//GEN-LAST:event_emailKeyReleased
-
-    private void postalCodeKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_postalCodeKeyPressed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_postalCodeKeyPressed
-
-    private void postalCodeKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_postalCodeKeyReleased
-update.setEnabled(!name.getText().trim().isEmpty()
-            && utils.DataValidation.isValidEmail(email.getText().trim())
-            && utils.DataValidation.isValidPhoneNumber(phoneNumber.getText().trim())
-            && utils.DataValidation.isValidPostalCode(postalCode.getText().trim()));
-    }//GEN-LAST:event_postalCodeKeyReleased
+    }//GEN-LAST:event_updateActionPerformed
 
     /**
      * @param args the command line arguments
