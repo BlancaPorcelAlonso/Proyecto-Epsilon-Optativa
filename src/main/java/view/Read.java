@@ -357,6 +357,14 @@ public class Read extends javax.swing.JDialog {
         // TODO add your handling code here:
     }//GEN-LAST:event_nifActionPerformed
 
+    private void readActionPerformed(java.awt.event.ActionEvent evt) {                                     
+        
+    }   
+    
+    private void postalCodeActionPerformed(java.awt.event.ActionEvent evt) {                                     
+        
+    }  
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private org.jdatepicker.JDatePicker dateOfBirth;
     private javax.swing.JTextField email;
