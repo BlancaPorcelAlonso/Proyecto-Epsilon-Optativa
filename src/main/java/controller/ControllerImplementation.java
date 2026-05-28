@@ -38,6 +38,7 @@ import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import org.jdatepicker.DateModel;
+import utils.Constants;
 
 /**
  * This class starts the visual part of the application and programs and manages
@@ -122,22 +123,22 @@ public class ControllerImplementation implements IController, ActionListener {
         String daoSelected = ((javax.swing.JCheckBox) (dSS.getAccept()[1])).getText();
         dSS.dispose();
         switch (daoSelected) {
-            case "ArrayList":
+            case Constants.arrayList:
                 dao = new DAOArrayList();
                 break;
-            case "HashMap":
+            case Constants.hashMap:
                 dao = new DAOHashMap();
                 break;
-            case "File":
+            case Constants.file:
                 setupFileStorage();
                 break;
-            case "File (Serialization)":
+            case Constants.fileSerial:
                 setupFileSerialization();
                 break;
-            case "SQL - Database":
+            case Constants.sqlDB:
                 setupSQLDatabase();
                 break;
-            case "JPA - Database":
+            case Constants.jpaDB:
                 setupJPADatabase();
                 break;
         }
@@ -230,13 +231,41 @@ public class ControllerImplementation implements IController, ActionListener {
     }
 
     private void handleInsertPerson() {
-        Person p = new Person(insert.getNam().getText(), insert.getNif().getText());
+        String emailText = insert.getEmail().getText().trim();
+        String phoneNumberText = insert.getPhoneNumber().getText().trim();
+        String postalCodeText = insert.getPostalCode().getText().trim();
+
+        if (!utils.DataValidation.isValidEmail(emailText)) {
+            JOptionPane.showMessageDialog(insert, "Invalid email format.", insert.getTitle(), JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        if (!utils.DataValidation.isValidPhoneNumber(phoneNumberText)) {
+            JOptionPane.showMessageDialog(insert, "Invalid phone number format.", insert.getTitle(), JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        if (!utils.DataValidation.isValidPostalCode(postalCodeText)) {
+            JOptionPane.showMessageDialog(insert, "Invalid postal code format.", insert.getTitle(), JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        Person p = new Person(
+                insert.getNam().getText().trim(),
+                insert.getNif().getText().trim(),
+                emailText,
+                phoneNumberText,
+                postalCodeText
+        );
+
         if (insert.getDateOfBirth().getModel().getValue() != null) {
             p.setDateOfBirth(((GregorianCalendar) insert.getDateOfBirth().getModel().getValue()).getTime());
         }
+
         if (insert.getPhoto().getIcon() != null) {
             p.setPhoto((ImageIcon) insert.getPhoto().getIcon());
         }
+
         insert(p);
         insert.getReset().doClick();
     }
@@ -250,15 +279,20 @@ public class ControllerImplementation implements IController, ActionListener {
     private void handleReadPerson() {
         Person p = new Person(read.getNif().getText());
         Person pNew = read(p);
+
         if (pNew != null) {
             read.getNam().setText(pNew.getName());
+            read.getEmail().setText(pNew.getEmail());
+            read.getPhoneNumber().setText(pNew.getPhoneNumber());
+            read.getPostalCode().setText(pNew.getPostalCode());
+
             if (pNew.getDateOfBirth() != null) {
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(pNew.getDateOfBirth());
                 DateModel<Calendar> dateModel = (DateModel<Calendar>) read.getDateOfBirth().getModel();
                 dateModel.setValue(calendar);
             }
-            //To avoid charging former images
+
             if (pNew.getPhoto() != null) {
                 pNew.getPhoto().getImage().flush();
                 read.getPhoto().setIcon(pNew.getPhoto());
@@ -320,10 +354,16 @@ public class ControllerImplementation implements IController, ActionListener {
             Person p = new Person(update.getNif().getText());
             Person pNew = read(p);
             if (pNew != null) {
+                update.getEmail().setEnabled(true);
+                update.getPhoneNumber().setEnabled(true);
+                update.getEmail().setText(pNew.getEmail());
+                update.getPhoneNumber().setText(pNew.getPhoneNumber());
                 update.getNam().setEnabled(true);
                 update.getDateOfBirth().setEnabled(true);
                 update.getPhoto().setEnabled(true);
                 update.getUpdate().setEnabled(true);
+                update.getPostalCode().setEnabled(true);
+                update.getPostalCode().setText(pNew.getPostalCode());
                 update.getNam().setText(pNew.getName());
                 if (pNew.getDateOfBirth() != null) {
                     Calendar calendar = Calendar.getInstance();
@@ -346,13 +386,41 @@ public class ControllerImplementation implements IController, ActionListener {
     public void handleUpdatePerson() {
 
         if (update != null) {
-            Person p = new Person(update.getNam().getText(), update.getNif().getText());
+            String emailText = update.getEmail().getText().trim();
+            String phoneNumberText = update.getPhoneNumber().getText().trim();
+            String postalCodeText = update.getPostalCode().getText().trim();
+
+            if (!utils.DataValidation.isValidEmail(emailText)) {
+                JOptionPane.showMessageDialog(update, "Invalid email format.", update.getTitle(), JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            if (!utils.DataValidation.isValidPhoneNumber(phoneNumberText)) {
+                JOptionPane.showMessageDialog(update, "Invalid phone number format.", update.getTitle(), JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            if (!utils.DataValidation.isValidPostalCode(postalCodeText)) {
+                JOptionPane.showMessageDialog(update, "Invalid postal code format.", update.getTitle(), JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            Person p = new Person(
+                    update.getNam().getText().trim(),
+                    update.getNif().getText().trim(),
+                    emailText,
+                    phoneNumberText,
+                    postalCodeText
+            );
+
             if ((update.getDateOfBirth().getModel().getValue()) != null) {
                 p.setDateOfBirth(((GregorianCalendar) update.getDateOfBirth().getModel().getValue()).getTime());
             }
+
             if ((ImageIcon) (update.getPhoto().getIcon()) != null) {
                 p.setPhoto((ImageIcon) update.getPhoto().getIcon());
             }
+
             update(p);
 
             JOptionPane.showMessageDialog(
@@ -382,11 +450,14 @@ public class ControllerImplementation implements IController, ActionListener {
                 } else {
                     model.setValueAt("", i, 2);
                 }
+                model.setValueAt(s.get(i).getEmail(), i, 3);
                 if (s.get(i).getPhoto() != null) {
-                    model.setValueAt("yes", i, 3);
+                    model.setValueAt("yes", i, 4);
                 } else {
-                    model.setValueAt("no", i, 3);
+                    model.setValueAt("no", i, 4);
                 }
+                model.setValueAt(s.get(i).getPhoneNumber(), i, 5);
+                model.setValueAt(s.get(i).getPostalCode(), i, 6);
             }
             readAll.setVisible(true);
         }
