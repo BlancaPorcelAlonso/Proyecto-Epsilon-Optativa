@@ -33,9 +33,11 @@ public class Insert extends javax.swing.JDialog {
     public Insert(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        setDatePickerButtonText(dateOfBirth, "Select a date");
         DropPhotoListener d = new DropPhotoListener(photo, this);
         DropTarget dropTarget = new DropTarget(photo, d);
         insert.setEnabled(false);
+
     }
 
     public JButton getReset() {
@@ -70,6 +72,15 @@ public class Insert extends javax.swing.JDialog {
         return photo;
     }
 
+    private void setDatePickerButtonText(java.awt.Container container, String text) {
+        for (java.awt.Component c : container.getComponents()) {
+            if (c instanceof javax.swing.JButton btn) {
+                btn.setText(text);
+                btn.setPreferredSize(null);
+            } else if (c instanceof java.awt.Container inner) {
+                setDatePickerButtonText(inner, text); // busca en niveles internos
+            }
+        }
     public JTextField getEmail() {
         return email;
     }
@@ -114,6 +125,13 @@ public class Insert extends javax.swing.JDialog {
                 insertActionPerformed(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(12, 12, 12, 12);
+        getContentPane().add(insert, gridBagConstraints);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel1.setText("Name");
@@ -149,7 +167,7 @@ public class Insert extends javax.swing.JDialog {
         photo.setBackground(new java.awt.Color(255, 255, 255));
         photo.setFont(new java.awt.Font("Segoe UI", 2, 10)); // NOI18N
         photo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        photo.setText("<html><center>PHOTO</center></br><br><center> <i>Supported format: PNG.</i></center></br><br><center><i>Max. size 64KB</i></center></html>");
+        photo.setText("<html><center>Drop your file here</center><br><center>PHOTO</center></br><br><center> <i>Supported format: PNG.</i></center></br><br><center><i>Max. size 64KB</i></center></html>");
         photo.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         photo.setMaximumSize(new java.awt.Dimension(150, 135));
         photo.setMinimumSize(new java.awt.Dimension(150, 135));
@@ -200,7 +218,21 @@ public class Insert extends javax.swing.JDialog {
 
         dateOfBirth.setMaximumSize(new java.awt.Dimension(350, 22));
         dateOfBirth.setMinimumSize(new java.awt.Dimension(350, 22));
+        dateOfBirth.setName(""); // NOI18N
         dateOfBirth.setPreferredSize(new java.awt.Dimension(350, 22));
+        dateOfBirth.setTextEditable(true);
+        dateOfBirth.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                dateOfBirthActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new java.awt.Insets(12, 12, 12, 24);
+        getContentPane().add(dateOfBirth, gridBagConstraints);
 
         jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel9.setText("Email");
@@ -443,6 +475,14 @@ public class Insert extends javax.swing.JDialog {
             showInsert();
         }
     }//GEN-LAST:event_nifKeyPressed
+
+    private void dateOfBirthActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dateOfBirthActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_dateOfBirthActionPerformed
+
+    private void insertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_insertActionPerformed
+        JOptionPane.showMessageDialog(this, "Person inserted successfully!", this.getTitle(), JOptionPane.INFORMATION_MESSAGE);
+    }//GEN-LAST:event_insertActionPerformed
 
     private void nifActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nifActionPerformed
         // TODO add your handling code here:
